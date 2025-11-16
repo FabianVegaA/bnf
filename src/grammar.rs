@@ -524,7 +524,7 @@ impl Grammar {
     /// Determine if the starting rule of the grammar can take us to a terminal state, i.e. all
     /// [`Term::Terminal`] types. Used as a check before generation, to tell if we can safely attempt
     /// to generate sentences without risking infinite loops
-    pub(crate) fn terminates(&self) -> bool {
+    pub fn terminates(&self) -> bool {
         let Some(starting_term) = self.starting_term() else {
             // if there are no rules, there's nothing to do so... it terminates
             return true;
