@@ -34,14 +34,14 @@
 //!
 //! ```
 
-#[cfg(feature = "ABNF")]
-use crate::ABNF;
 use crate::error::Error;
 use crate::expression::Expression;
-use crate::parsers::{self, BNF, Format};
+use crate::parsers::{self, Format, BNF};
 use crate::production::Production;
 use crate::term::Term;
-use rand::{Rng, SeedableRng, rng, rngs::StdRng, seq::IndexedRandom};
+#[cfg(feature = "ABNF")]
+use crate::ABNF;
+use rand::{rng, rngs::StdRng, seq::IndexedRandom, Rng, SeedableRng};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -322,7 +322,7 @@ impl Grammar {
         self.productions_iter().next().map(|prod| &prod.lhs)
     }
 
-    fn eval_terminal(
+    pub fn eval_terminal(
         &self,
         term: &Term,
         rng: &mut StdRng,
@@ -1209,18 +1209,14 @@ mod tests {
 
         let input = "GATTACA";
 
-        assert!(
-            grammar
-                .parse_input_starting_with(input, &Term::Nonterminal("dna".to_string()))
-                .next()
-                .is_some()
-        );
-        assert!(
-            grammar
-                .parse_input_starting_with(input, &Term::Nonterminal("base".to_string()))
-                .next()
-                .is_none()
-        );
+        assert!(grammar
+            .parse_input_starting_with(input, &Term::Nonterminal("dna".to_string()))
+            .next()
+            .is_some());
+        assert!(grammar
+            .parse_input_starting_with(input, &Term::Nonterminal("base".to_string()))
+            .next()
+            .is_none());
     }
 
     #[test]
@@ -1231,11 +1227,9 @@ mod tests {
             .unwrap();
 
         let input = "GATTACA";
-        assert!(
-            grammar
-                .parse_input_starting_with(input, &Term::Nonterminal("notfound".to_string()))
-                .next()
-                .is_none()
-        )
+        assert!(grammar
+            .parse_input_starting_with(input, &Term::Nonterminal("notfound".to_string()))
+            .next()
+            .is_none())
     }
 }
